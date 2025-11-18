@@ -1,0 +1,328 @@
+/* Fantasy Battle Generator Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    min-height: 100vh;
+    color: #ecf0f1;
+    padding: 10px;
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(52, 73, 94, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid #f39c12;
+}
+
+h1 {
+    text-align: center;
+    color: #f39c12;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+    color: #e74c3c;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.battle-form {
+    background: rgba(44, 62, 80, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #34495e;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.form-group {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ecf0f1;
+    font-size: 0.9rem;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #34495e;
+    border-radius: 8px;
+    background: #2c3e50;
+    color: #ecf0f1;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select:hover, select:focus {
+    border-color: #f39c12;
+    outline: none;
+}
+
+option {
+    background: #2c3e50;
+    color: #ecf0f1;
+}
+
+.btn {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin: 0 auto;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #c0392b, #a93226);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #8e44ad, #732d91);
+    color: white;
+    box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #732d91, #5b2c6f);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(142, 68, 173, 0.4);
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #34495e, #2c3e50);
+    color: white;
+    box-shadow: 0 4px 15px rgba(52, 73, 94, 0.3);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(45deg, #2c3e50, #1a252f);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 73, 94, 0.4);
+}
+
+.battle-scene {
+    background: rgba(44, 62, 80, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #34495e;
+    text-align: center;
+}
+
+.scene-description {
+    background: rgba(52, 73, 94, 0.9);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    line-height: 1.4;
+    border-left: 4px solid #f39c12;
+}
+
+.battle-image {
+    width: 80vw;
+    max-width: 1000px;
+    margin: 0 auto 15px auto;
+    background: rgba(52, 73, 94, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #7f8c8d;
+    font-size: 1.2rem;
+    color: #bdc3c7;
+}
+
+.battle-result {
+    background: rgba(44, 62, 80, 0.8);
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #34495e;
+}
+
+.result-description {
+    background: rgba(52, 73, 94, 0.9);
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    line-height: 1.6;
+    font-weight: bold;
+}
+
+.result-win {
+    border-left: 4px solid #27ae60;
+    color: #2ecc71;
+}
+
+.result-lose {
+    border-left: 4px solid #e74c3c;
+    color: #e74c3c;
+}
+
+.result-draw {
+    border-left: 4px solid #f39c12;
+    color: #f39c12;
+}
+
+.result-both-standing {
+    border-left: 4px solid #3498db;
+    color: #3498db;
+}
+
+.score-display {
+    background: rgba(52, 73, 94, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #f39c12;
+}
+
+.score-display h3 {
+    color: #f39c12;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.stat-item {
+    background: rgba(44, 62, 80, 0.8);
+    padding: 12px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid #7f8c8d;
+}
+
+.stat-item.win {
+    border-left-color: #27ae60;
+}
+
+.stat-item.lose {
+    border-left-color: #e74c3c;
+}
+
+.stat-item.draw {
+    border-left-color: #f39c12;
+}
+
+.stat-item.stalemate {
+    border-left-color: #3498db;
+}
+
+.stat-item.winrate {
+    border-left-color: #9b59b6;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #bdc3c7;
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+/* Responsive design */
+@media (max-width: 800px) {
+    .form-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .form-group {
+        min-width: 200px;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        margin: 5px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    h2 {
+        font-size: 1.3rem;
+    }
+    
+    .battle-form, .battle-scene, .battle-result {
+        padding: 15px;
+    }
+    
+    .battle-image {
+        width: 95vw;
+        min-height: 35vh;
+        padding: 15px;
+    }
+    
+    .character-image, .result-character-image {
+        max-width: 25vw;
+        max-height: 25vh;
+        height: 25vh;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

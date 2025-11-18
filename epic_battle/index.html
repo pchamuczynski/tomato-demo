@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Battle Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Fantasy Battle Generator</h1>
+        
+        <div id="battleScene" class="battle-scene">
+            <div id="sceneDescription" class="scene-description"></div>
+            <div id="battleImage" class="battle-image">
+                <!-- Battle scene will be rendered here -->
+            </div>
+        </div>
+        
+        <div class="battle-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="protagonist">Hero:</label>
+                    <select id="protagonist">
+                        <option value="peter">Peter</option>
+                        <option value="susan">Susan</option>
+                        <option value="edmund">Edmund</option>
+                        <option value="lucy">Lucy</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="protagonistWeapon">Hero Weapon:</label>
+                    <select id="protagonistWeapon">
+                        <option value="sword">Sword</option>
+                        <option value="bow">Bow</option>
+                        <option value="axe">Axe</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="antagonist">Villain:</label>
+                    <select id="antagonist">
+                        <option value="witch">Witch</option>
+                        <option value="giant">Giant</option>
+                        <option value="ogre">Ogre</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="antagonistWeapon">Villain Weapon:</label>
+                    <select id="antagonistWeapon">
+                        <option value="sword">Sword</option>
+                        <option value="bow">Bow</option>
+                        <option value="axe">Axe</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <select id="location">
+                        <option value="desert">Desert</option>
+                        <option value="forest">Forest</option>
+                        <option value="castle">Castle</option>
+                        <option value="swamp">Swamp</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button id="fight" class="btn btn-danger">Fight!</button>
+        </div>
+        
+        <div id="battleResult" class="battle-result" style="display: none;">
+            <h2>Battle Result</h2>
+            <div id="scoreDisplay" class="score-display"></div>
+            <div id="resultDescription" class="result-description"></div>
+            <button id="tryAgain" class="btn btn-secondary">Try Again</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
