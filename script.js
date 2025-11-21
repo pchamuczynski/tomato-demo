@@ -44,10 +44,20 @@ const battleOutcomes = {
     "edmund-axe-cyclops-mace-castle": "protagonist_wins",
     "lucy-dagger-ogre-mace-swamp": "antagonist_wins",
     
+    // Dragon-specific battles with claws and teeth
+    "peter-sword-dragon-claws and teeth-castle": "antagonist_wins",
+    "peter-bow-dragon-claws and teeth-desert": "both_defeated",
+    "susan-crossbow-dragon-claws and teeth-forest": "protagonist_wins",
+    "susan-axe-dragon-claws and teeth-swamp": "antagonist_wins",
+    "edmund-dagger-dragon-claws and teeth-castle": "both_standing",
+    "lucy-bow-dragon-claws and teeth-desert": "protagonist_wins",
+    "lucy-sword-dragon-claws and teeth-forest": "both_defeated",
+    
     // Wildcard patterns - more specific patterns should come after exact matches
     "edmund-*-*-*-forest": "protagonist_wins",  // Edmund always wins in forest
     "lucy-bow-*-*-*": "protagonist_wins",       // Lucy with bow always wins
     "*-*-cyclops-mace-*": "antagonist_wins",   // Cyclops with mace always wins
+    "*-*-dragon-claws and teeth-*": "antagonist_wins",  // Dragon with claws and teeth is very powerful
     "*-dagger-witch-*-swamp": "both_defeated",  // Dagger vs witch in swamp always results in both defeated
     "susan-*-ogre-*-*": "both_standing"         // Susan vs ogre always results in stalemate
 };
@@ -130,7 +140,8 @@ function updateAntagonistWeapons() {
     const availableWeapons = {
         witch: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
         cyclops: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
-        ogre: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace']
+        ogre: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
+        dragon: ['claws and teeth']
     };
     
     const weapons = availableWeapons[antagonist] || ['sword', 'bow', 'crossbow', 'axe', 'dagger'];
@@ -226,7 +237,8 @@ function getWeaponIcon(weapon) {
         crossbow: '🏹',
         axe: '🪓',
         dagger: '🗡️',
-        mace: '🔨'
+        mace: '🔨',
+        'claws and teeth': '🦷'
     };
     return weaponIcons[weapon] || '⚔️';
 }
@@ -235,7 +247,8 @@ function getAntagonistIcon(antagonist) {
     const antagonistIcons = {
         witch: '🧙‍♀️',
         cyclops: '👁️',
-        ogre: '👹'
+        ogre: '👹',
+        dragon: '🐉'
     };
     return antagonistIcons[antagonist] || '👹';
 }
