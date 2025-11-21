@@ -6,60 +6,62 @@ const battleOutcomes = {
     // Outcomes: "protagonist_wins", "antagonist_wins", "both_defeated", "both_standing"
     
     // Sample battles (hero-heroWeapon-villain-villainWeapon-location)
-    "peter-sword-witch-sword-castle": "protagonist_wins",
-    "peter-bow-witch-axe-forest": "both_standing",
-    "peter-axe-witch-bow-desert": "antagonist_wins",
-    "peter-sword-cyclops-axe-desert": "both_defeated",
-    "peter-bow-cyclops-sword-castle": "protagonist_wins",
-    "peter-axe-ogre-bow-swamp": "antagonist_wins",
+    "edmund-*-*-*-swamp": "protagonist_wins",
+    "*-*-dragon-*-*": "antagonist_wins",  // Dragon with claws and teeth is very powerful
+    // "peter-sword-witch-sword-castle": "protagonist_wins",
+    // "peter-bow-witch-axe-forest": "both_standing",
+    // "peter-axe-witch-bow-desert": "antagonist_wins",
+    // "peter-sword-cyclops-axe-desert": "both_defeated",
+    // "peter-bow-cyclops-sword-castle": "protagonist_wins",
+    // "peter-axe-ogre-bow-swamp": "antagonist_wins",
     
-    "susan-bow-witch-sword-forest": "protagonist_wins",
-    "susan-sword-cyclops-axe-castle": "both_standing",
-    "susan-bow-ogre-sword-swamp": "protagonist_wins",
-    "susan-axe-witch-bow-desert": "both_defeated",
+    // "susan-bow-witch-sword-forest": "protagonist_wins",
+    // "susan-sword-cyclops-axe-castle": "both_standing",
+    // "susan-bow-ogre-sword-swamp": "protagonist_wins",
+    // "susan-axe-witch-bow-desert": "both_defeated",
     
-    "edmund-sword-witch-axe-desert": "both_standing",
-    "edmund-axe-cyclops-sword-forest": "antagonist_wins",
-    "edmund-sword-ogre-bow-castle": "protagonist_wins",
-    "edmund-bow-witch-sword-swamp": "both_defeated",
+    // "edmund-sword-witch-axe-desert": "both_standing",
+    // "edmund-axe-cyclops-sword-forest": "antagonist_wins",
+    // "edmund-sword-ogre-bow-castle": "protagonist_wins",
+    // "edmund-bow-witch-sword-swamp": "both_defeated",
     
-    "lucy-bow-witch-sword-castle": "protagonist_wins",
-    "lucy-sword-cyclops-axe-swamp": "both_defeated",
-    "lucy-axe-ogre-sword-forest": "antagonist_wins",
-    "lucy-axe-witch-bow-desert": "both_standing",
+    // "lucy-bow-witch-sword-castle": "protagonist_wins",
+    // "lucy-sword-cyclops-axe-swamp": "both_defeated",
+    // "lucy-axe-ogre-sword-forest": "antagonist_wins",
+    // "lucy-axe-witch-bow-desert": "both_standing",
     
-    // Additional battles with new weapons
-    "peter-crossbow-witch-dagger-forest": "protagonist_wins",
-    "peter-dagger-cyclops-mace-castle": "antagonist_wins",
-    "susan-crossbow-ogre-mace-desert": "both_defeated",
-    "susan-dagger-witch-crossbow-swamp": "both_standing",
-    "edmund-crossbow-cyclops-dagger-forest": "protagonist_wins",
-    "edmund-dagger-ogre-crossbow-castle": "antagonist_wins",
-    "lucy-crossbow-witch-dagger-desert": "both_standing",
-    "lucy-dagger-cyclops-crossbow-swamp": "both_defeated",
+    // // Additional battles with new weapons
+    // "peter-crossbow-witch-dagger-forest": "protagonist_wins",
+    // "peter-dagger-cyclops-mace-castle": "antagonist_wins",
+    // "susan-crossbow-ogre-mace-desert": "both_defeated",
+    // "susan-dagger-witch-crossbow-swamp": "both_standing",
+    // "edmund-crossbow-cyclops-dagger-forest": "protagonist_wins",
+    // "edmund-dagger-ogre-crossbow-castle": "antagonist_wins",
+    // "lucy-crossbow-witch-dagger-desert": "both_standing",
+    // "lucy-dagger-cyclops-crossbow-swamp": "both_defeated",
     
-    // Mace-specific battles for cyclops and ogre
-    "peter-sword-cyclops-mace-desert": "antagonist_wins",
-    "susan-bow-ogre-mace-forest": "both_defeated",
-    "edmund-axe-cyclops-mace-castle": "protagonist_wins",
-    "lucy-dagger-ogre-mace-swamp": "antagonist_wins",
+    // // Mace-specific battles for cyclops and ogre
+    // "peter-sword-cyclops-mace-desert": "antagonist_wins",
+    // "susan-bow-ogre-mace-forest": "both_defeated",
+    // "edmund-axe-cyclops-mace-castle": "protagonist_wins",
+    // "lucy-dagger-ogre-mace-swamp": "antagonist_wins",
     
-    // Dragon-specific battles with claws and teeth
-    "peter-sword-dragon-claws and teeth-castle": "antagonist_wins",
-    "peter-bow-dragon-claws and teeth-desert": "both_defeated",
-    "susan-crossbow-dragon-claws and teeth-forest": "protagonist_wins",
-    "susan-axe-dragon-claws and teeth-swamp": "antagonist_wins",
-    "edmund-dagger-dragon-claws and teeth-castle": "both_standing",
-    "lucy-bow-dragon-claws and teeth-desert": "protagonist_wins",
-    "lucy-sword-dragon-claws and teeth-forest": "both_defeated",
+    // // Dragon-specific battles with claws and teeth
+    // "peter-sword-dragon-claws and teeth-castle": "antagonist_wins",
+    // "peter-bow-dragon-claws and teeth-desert": "both_defeated",
+    // "susan-crossbow-dragon-claws and teeth-swamp": "protagonist_wins",
+    // "susan-axe-dragon-claws and teeth-swamp": "antagonist_wins",
+    // "edmund-dagger-dragon-claws and teeth-castle": "both_standing",
+    // "lucy-bow-dragon-claws and teeth-desert": "protagonist_wins",
+    // "lucy-sword-dragon-claws and teeth-forest": "both_defeated",
     
-    // Wildcard patterns - more specific patterns should come after exact matches
-    "edmund-*-*-*-forest": "protagonist_wins",  // Edmund always wins in forest
-    "lucy-bow-*-*-*": "protagonist_wins",       // Lucy with bow always wins
-    "*-*-cyclops-mace-*": "antagonist_wins",   // Cyclops with mace always wins
-    "*-*-dragon-claws and teeth-*": "antagonist_wins",  // Dragon with claws and teeth is very powerful
-    "*-dagger-witch-*-swamp": "both_defeated",  // Dagger vs witch in swamp always results in both defeated
-    "susan-*-ogre-*-*": "both_standing"         // Susan vs ogre always results in stalemate
+    // // Wildcard patterns - more specific patterns should come after exact matches
+    // "edmund-*-*-*-forest": "protagonist_wins",  // Edmund always wins in forest
+    // "lucy-*-*-*-swamp": "protagonist_wins",       // Lucy with bow always wins
+    // "*-*-cyclops-mace-*": "antagonist_wins",   // Cyclops with mace always wins
+    // "*-*-dragon-claws and teeth-*": "antagonist_wins",  // Dragon with claws and teeth is very powerful
+    // "*-dagger-witch-*-swamp": "both_defeated",  // Dagger vs witch in swamp always results in both defeated
+    // "susan-*-ogre-*-*": "both_standing"         // Susan vs ogre always results in stalemate
 };
 
 // Default outcomes for unconfigured combinations
@@ -271,14 +273,10 @@ function matchesPattern(battleKey, pattern) {
 }
 
 function findBattleOutcome(battleKey) {
-    // First, try exact match
-    if (battleOutcomes[battleKey]) {
-        return battleOutcomes[battleKey];
-    }
-    
-    // Then, try wildcard patterns
+    // Check outcomes iteratively as they are defined, exit on first match
     for (const pattern in battleOutcomes) {
-        if (pattern.includes('*') && matchesPattern(battleKey, pattern)) {
+        // Check exact match or wildcard pattern
+        if (pattern === battleKey || (pattern.includes('*') && matchesPattern(battleKey, pattern))) {
             return battleOutcomes[pattern];
         }
     }
