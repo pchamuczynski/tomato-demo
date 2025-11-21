@@ -9,47 +9,24 @@ const battleOutcomes = {
     "peter-sword-witch-sword-castle": "protagonist_wins",
     "peter-bow-witch-axe-forest": "both_standing",
     "peter-axe-witch-bow-desert": "antagonist_wins",
-    "peter-sword-cyclops-axe-desert": "both_defeated",
-    "peter-bow-cyclops-sword-castle": "protagonist_wins",
+    "peter-sword-cyclopes-axe-desert": "both_defeated",
+    "peter-bow-cyclopes-sword-castle": "protagonist_wins",
     "peter-axe-ogre-bow-swamp": "antagonist_wins",
     
     "susan-bow-witch-sword-forest": "protagonist_wins",
-    "susan-sword-cyclops-axe-castle": "both_standing",
+    "susan-sword-cyclopes-axe-castle": "both_standing",
     "susan-bow-ogre-sword-swamp": "protagonist_wins",
     "susan-axe-witch-bow-desert": "both_defeated",
     
     "edmund-sword-witch-axe-desert": "both_standing",
-    "edmund-axe-cyclops-sword-forest": "antagonist_wins",
+    "edmund-axe-cyclopes-sword-forest": "antagonist_wins",
     "edmund-sword-ogre-bow-castle": "protagonist_wins",
     "edmund-bow-witch-sword-swamp": "both_defeated",
     
     "lucy-bow-witch-sword-castle": "protagonist_wins",
-    "lucy-sword-cyclops-axe-swamp": "both_defeated",
+    "lucy-sword-cyclopes-axe-swamp": "both_defeated",
     "lucy-axe-ogre-sword-forest": "antagonist_wins",
-    "lucy-axe-witch-bow-desert": "both_standing",
-    
-    // Additional battles with new weapons
-    "peter-crossbow-witch-dagger-forest": "protagonist_wins",
-    "peter-dagger-cyclops-mace-castle": "antagonist_wins",
-    "susan-crossbow-ogre-mace-desert": "both_defeated",
-    "susan-dagger-witch-crossbow-swamp": "both_standing",
-    "edmund-crossbow-cyclops-dagger-forest": "protagonist_wins",
-    "edmund-dagger-ogre-crossbow-castle": "antagonist_wins",
-    "lucy-crossbow-witch-dagger-desert": "both_standing",
-    "lucy-dagger-cyclops-crossbow-swamp": "both_defeated",
-    
-    // Mace-specific battles for cyclops and ogre
-    "peter-sword-cyclops-mace-desert": "antagonist_wins",
-    "susan-bow-ogre-mace-forest": "both_defeated",
-    "edmund-axe-cyclops-mace-castle": "protagonist_wins",
-    "lucy-dagger-ogre-mace-swamp": "antagonist_wins",
-    
-    // Wildcard patterns - more specific patterns should come after exact matches
-    "edmund-*-*-*-forest": "protagonist_wins",  // Edmund always wins in forest
-    "lucy-bow-*-*-*": "protagonist_wins",       // Lucy with bow always wins
-    "*-*-cyclops-mace-*": "antagonist_wins",   // Cyclops with mace always wins
-    "*-dagger-witch-*-swamp": "both_defeated",  // Dagger vs witch in swamp always results in both defeated
-    "susan-*-ogre-*-*": "both_standing"         // Susan vs ogre always results in stalemate
+    "lucy-axe-witch-bow-desert": "both_standing"
 };
 
 // Default outcomes for unconfigured combinations
@@ -68,13 +45,6 @@ const resultDescriptions = {
     antagonist_wins: "Defeat... The dark forces prove too powerful this time. But heroes never give up!",
     both_defeated: "Both warriors fall in this epic clash, neither able to claim victory in this brutal encounter.",
     both_standing: "An epic stalemate! Both combatants remain standing, respect earned through fierce battle."
-};
-
-const resultSummaries = {
-    protagonist_wins: "Hero wins!",
-    antagonist_wins: "Villain wins!",
-    both_defeated: "Both defeated!",
-    both_standing: "Stalemate!"
 };
 
 // DOM elements
@@ -107,53 +77,14 @@ let gameStats = {
 // Event listeners
 protagonistSelect.addEventListener('change', updateBattleScene);
 protagonistWeaponSelect.addEventListener('change', updateBattleScene);
-antagonistSelect.addEventListener('change', () => {
-    updateAntagonistWeapons();
-    updateBattleScene();
-});
+antagonistSelect.addEventListener('change', updateBattleScene);
 antagonistWeaponSelect.addEventListener('change', updateBattleScene);
 locationSelect.addEventListener('change', updateBattleScene);
 fightBtn.addEventListener('click', executeBattle);
 tryAgainBtn.addEventListener('click', resetBattle);
 
 // Initialize the battle scene on page load
-document.addEventListener('DOMContentLoaded', () => {
-    updateAntagonistWeapons();
-    updateBattleScene();
-});
-
-function updateAntagonistWeapons() {
-    const antagonist = antagonistSelect.value;
-    const currentWeapon = antagonistWeaponSelect.value;
-    
-    // Define available weapons for each antagonist
-    const availableWeapons = {
-        witch: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
-        cyclops: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
-        ogre: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace']
-    };
-    
-    const weapons = availableWeapons[antagonist] || ['sword', 'bow', 'crossbow', 'axe', 'dagger'];
-    
-    // Clear current options
-    antagonistWeaponSelect.innerHTML = '';
-    
-    // Add available weapon options
-    weapons.forEach(weapon => {
-        const option = document.createElement('option');
-        option.value = weapon;
-        option.textContent = weapon.charAt(0).toUpperCase() + weapon.slice(1);
-        antagonistWeaponSelect.appendChild(option);
-    });
-    
-    // Try to maintain current selection if it's available
-    if (weapons.includes(currentWeapon)) {
-        antagonistWeaponSelect.value = currentWeapon;
-    } else {
-        // Default to first available weapon
-        antagonistWeaponSelect.value = weapons[0];
-    }
-}
+document.addEventListener('DOMContentLoaded', updateBattleScene);
 
 function updateBattleScene() {
     // Get current selected values
@@ -223,10 +154,7 @@ function getWeaponIcon(weapon) {
     const weaponIcons = {
         sword: '⚔️',
         bow: '🏹',
-        crossbow: '🏹',
-        axe: '🪓',
-        dagger: '🗡️',
-        mace: '🔨'
+        axe: '🪓'
     };
     return weaponIcons[weapon] || '⚔️';
 }
@@ -234,51 +162,18 @@ function getWeaponIcon(weapon) {
 function getAntagonistIcon(antagonist) {
     const antagonistIcons = {
         witch: '🧙‍♀️',
-        cyclops: '👁️',
+        cyclopes: '👁️',
         ogre: '👹'
     };
     return antagonistIcons[antagonist] || '👹';
-}
-
-function matchesPattern(battleKey, pattern) {
-    const battleParts = battleKey.split('-');
-    const patternParts = pattern.split('-');
-    
-    if (battleParts.length !== patternParts.length) {
-        return false;
-    }
-    
-    for (let i = 0; i < battleParts.length; i++) {
-        if (patternParts[i] !== '*' && patternParts[i] !== battleParts[i]) {
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-function findBattleOutcome(battleKey) {
-    // First, try exact match
-    if (battleOutcomes[battleKey]) {
-        return battleOutcomes[battleKey];
-    }
-    
-    // Then, try wildcard patterns
-    for (const pattern in battleOutcomes) {
-        if (pattern.includes('*') && matchesPattern(battleKey, pattern)) {
-            return battleOutcomes[pattern];
-        }
-    }
-    
-    return null;
 }
 
 function executeBattle() {
     // Generate battle key with all 5 parameters
     const battleKey = `${currentBattle.protagonist}-${currentBattle.protagonistWeapon}-${currentBattle.antagonist}-${currentBattle.antagonistWeapon}-${currentBattle.location}`;
     
-    // Get outcome from configuration (exact match or wildcard) or use random default
-    let outcome = findBattleOutcome(battleKey);
+    // Get outcome from configuration or use random default
+    let outcome = battleOutcomes[battleKey];
     if (!outcome) {
         outcome = defaultOutcomes[Math.floor(Math.random() * defaultOutcomes.length)];
     }
@@ -314,7 +209,6 @@ function executeBattle() {
     const resultInfo = document.createElement('div');
     resultInfo.className = 'result-info';
     resultInfo.innerHTML = `
-        <div class="battle-outcome-summary" data-testid="battle-outcome">${resultSummaries[outcome]}</div>
         <div class="result-text">${resultDescriptions[outcome]}</div>
         <div class="battle-stats">
             <strong>Battle ${gameStats.totalBattles}:</strong> 
@@ -343,18 +237,10 @@ function showBattleResult(outcome) {
     const protagonistFallback = document.querySelector('.protagonist-character .character-fallback');
     const antagonistFallback = document.querySelector('.antagonist-character .character-fallback');
     
-
-    
     // Update protagonist image based on outcome
     if (outcome === 'antagonist_wins' || outcome === 'both_defeated') {
-        if (protagonistImg) {
-            protagonistImg.src = `resources/characters/${currentBattle.protagonist}-defeated.png`;
-            protagonistImg.alt = `${currentBattle.protagonist} defeated`;
-            // Add rotation class for defeated hero (rotate left) with a slight delay to ensure image loads
-            setTimeout(() => {
-                protagonistImg.classList.add('character-defeated-hero');
-            }, 100);
-        }
+        protagonistImg.src = `resources/characters/${currentBattle.protagonist}-defeated.png`;
+        protagonistImg.alt = `${currentBattle.protagonist} defeated`;
         // Update fallback icon
         const protIcon = protagonistFallback.querySelector('.character-icon');
         if (protIcon) protIcon.textContent = '💀';
@@ -362,14 +248,8 @@ function showBattleResult(outcome) {
     
     // Update antagonist image based on outcome
     if (outcome === 'protagonist_wins' || outcome === 'both_defeated') {
-        if (antagonistImg) {
-            antagonistImg.src = `resources/characters/${currentBattle.antagonist}-defeated.png`;
-            antagonistImg.alt = `${currentBattle.antagonist} defeated`;
-            // Add rotation class for defeated villain (rotate right) with a slight delay to ensure image loads
-            setTimeout(() => {
-                antagonistImg.classList.add('character-defeated-villain');
-            }, 100);
-        }
+        antagonistImg.src = `resources/characters/${currentBattle.antagonist}-defeated.png`;
+        antagonistImg.alt = `${currentBattle.antagonist} defeated`;
         // Update fallback icon
         const antIcon = antagonistFallback.querySelector('.character-icon');
         if (antIcon) antIcon.textContent = '💀';
@@ -454,18 +334,7 @@ function resetBattle() {
     const vsIndicator = document.querySelector('.vs-indicator');
     if (vsIndicator) vsIndicator.style.display = 'block';
     
-    // Remove rotation classes from existing character images
-    const protagonistImg = document.querySelector('.protagonist-character img');
-    const antagonistImg = document.querySelector('.antagonist-character img');
-    if (protagonistImg) {
-        protagonistImg.classList.remove('character-defeated-hero');
-    }
-    if (antagonistImg) {
-        antagonistImg.classList.remove('character-defeated-villain');
-    }
-    
-    // Update weapon options and battle scene with current selections (this will restore original character images)
-    updateAntagonistWeapons();
+    // Update the battle scene with current selections (this will restore original character images)
     updateBattleScene();
 }
 
@@ -578,20 +447,6 @@ style.textContent = `
         filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
     }
     
-    .protagonist-character .character-image,
-    .protagonist-result .result-character-image {
-        max-width: 20vw;
-        max-height: 30vh;
-        height: 30vh;
-    }
-    
-    .antagonist-character .character-image,
-    .antagonist-result .result-character-image {
-        max-width: 24vw;
-        max-height: 36vh;
-        height: 36vh;
-    }
-    
     .vs-indicator {
         position: absolute;
         top: 50%;
@@ -657,20 +512,6 @@ style.textContent = `
         border-left: 4px solid #f39c12;
     }
     
-    .battle-outcome-summary {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #f39c12;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        border: 2px solid #f39c12;
-        padding: 8px 16px;
-        border-radius: 6px;
-        background: rgba(243, 156, 18, 0.1);
-        display: inline-block;
-    }
-    
     .result-text {
         font-size: 1.2rem;
         font-weight: bold;
@@ -683,18 +524,6 @@ style.textContent = `
         margin-bottom: 20px;
         color: #bdc3c7;
         line-height: 1.4;
-    }
-    
-    .character-image.character-defeated-hero {
-        transform: rotate(-90deg) !important;
-        transition: transform 0.8s ease-in-out;
-        transform-origin: center center;
-    }
-    
-    .character-image.character-defeated-villain {
-        transform: rotate(90deg) !important;
-        transition: transform 0.8s ease-in-out;
-        transform-origin: center center;
     }
     
     .battle-summary {

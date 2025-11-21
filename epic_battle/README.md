@@ -5,7 +5,7 @@ A simple web application that generates fantasy battle scenarios with customizab
 ## Features
 
 - **Character Selection**: Choose from Peter, Susan, Edmund, or Lucy as protagonists
-- **Enemy Selection**: Battle against witch, giant, or ogre antagonists  
+- **Enemy Selection**: Battle against witch, cyclops, or ogre antagonists  
 - **Weapon Choice**: Fight with sword, bow, or axe
 - **Location Settings**: Battle in desert, forest, castle, or swamp environments
 - **Real-Time Battle Arena**: Battle scene updates instantly as you change selections
@@ -89,9 +89,9 @@ The application expects images in the `resources/` folder:
 - `susan-sword.png`, `susan-bow.png`, `susan-axe.png`
 - `edmund-sword.png`, `edmund-bow.png`, `edmund-axe.png`
 - `lucy-sword.png`, `lucy-bow.png`, `lucy-axe.png`
-- `witch.png`, `giant.png`, `ogre.png`
+- `witch.png`, `cyclops.png`, `ogre.png`
 - `peter-defeated.png`, `susan-defeated.png`, `edmund-defeated.png`, `lucy-defeated.png`
-- `witch-defeated.png`, `giant-defeated.png`, `ogre-defeated.png`
+- `witch-defeated.png`, `cyclops-defeated.png`, `ogre-defeated.png`
 
 **Background Images** (JPG or PNG):
 - `desert.jpg`, `forest.jpg`, `castle.jpg`, `swamp.jpg`

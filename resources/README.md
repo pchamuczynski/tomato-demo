@@ -25,43 +25,27 @@ resources/
 #### Protagonists (with weapons)
 - `peter-sword.png` - Peter holding a sword
 - `peter-bow.png` - Peter holding a bow
-- `peter-crossbow.png` - Peter holding a crossbow
 - `peter-axe.png` - Peter holding an axe
-- `peter-dagger.png` - Peter holding a dagger
 - `susan-sword.png` - Susan holding a sword
 - `susan-bow.png` - Susan holding a bow
-- `susan-crossbow.png` - Susan holding a crossbow
 - `susan-axe.png` - Susan holding an axe
-- `susan-dagger.png` - Susan holding a dagger
 - `edmund-sword.png` - Edmund holding a sword
 - `edmund-bow.png` - Edmund holding a bow
-- `edmund-crossbow.png` - Edmund holding a crossbow
 - `edmund-axe.png` - Edmund holding an axe
-- `edmund-dagger.png` - Edmund holding a dagger
 - `lucy-sword.png` - Lucy holding a sword
 - `lucy-bow.png` - Lucy holding a bow
-- `lucy-crossbow.png` - Lucy holding a crossbow
 - `lucy-axe.png` - Lucy holding an axe
-- `lucy-dagger.png` - Lucy holding a dagger
 
 #### Antagonists (with weapons)
 - `witch-sword.png` - Witch with sword
 - `witch-bow.png` - Witch with bow
-- `witch-crossbow.png` - Witch with crossbow
 - `witch-axe.png` - Witch with axe
-- `witch-dagger.png` - Witch with dagger
-- `cyclops-sword.png` - Cyclops with sword
-- `cyclops-bow.png` - Cyclops with bow
-- `cyclops-crossbow.png` - Cyclops with crossbow
-- `cyclops-axe.png` - Cyclops with axe
-- `cyclops-dagger.png` - Cyclops with dagger
-- `cyclops-mace.png` - Cyclops with mace
+- `cyclopes-sword.png` - Cyclopes with sword
+- `cyclopes-bow.png` - Cyclopes with bow
+- `cyclopes-axe.png` - Cyclopes with axe
 - `ogre-sword.png` - Ogre with sword
 - `ogre-bow.png` - Ogre with bow
-- `ogre-crossbow.png` - Ogre with crossbow
 - `ogre-axe.png` - Ogre with axe
-- `ogre-dagger.png` - Ogre with dagger
-- `ogre-mace.png` - Ogre with mace
 
 #### Defeated Characters
 - `peter-defeated.png` - Peter defeated
@@ -69,7 +53,7 @@ resources/
 - `edmund-defeated.png` - Edmund defeated
 - `lucy-defeated.png` - Lucy defeated
 - `witch-defeated.png` - Witch defeated
-- `cyclops-defeated.png` - Cyclops defeated
+- `cyclopes-defeated.png` - Cyclopes defeated
 - `ogre-defeated.png` - Ogre defeated
 
 ## Image Specifications
