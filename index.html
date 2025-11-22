@@ -10,6 +10,41 @@
     <div class="container">
         <h1>Fantasy Battle Generator</h1>
         
+        <div class="game-stats">
+            <div class="form-group">
+                <label for="outcomeSet">Game Type:</label>
+                <select id="outcomeSet">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+            <div class="battle-counter">
+                <span class="stat-label">Battles:</span>
+                <span id="battleCounter" class="stat-value">0 / 0</span>
+            </div>
+            <div class="defeated-villains">
+                <h3>Defeated Villains:</h3>
+                <div id="defeatedList" class="defeated-list"></div>
+            </div>
+            <button id="resetGame" class="btn btn-warning">Reset Game</button>
+        </div>
+        
+        <div id="victoryMessage" class="victory-message" style="display: none;">
+            <h2>🎉 CONGRATULATIONS! 🎉</h2>
+            <p>You have defeated all the villains and saved the realm!</p>
+            <p>You are a true hero! Start a new game to continue your adventures.</p>
+        </div>
+        
+        <div id="battleResultContainer" class="last-battle-result">
+            <div class="battle-outcome-summary" data-testid="battle-outcome"></div>
+            <div class="result-text"></div>
+            <div class="battle-stats"></div>
+            <div id="victoryText" class="victory-text" style="display: none;">
+                🎉 CONGRATULATIONS! 🎉<br>
+                You have defeated all the villains and saved the realm!<br>
+                You are a true hero!
+            </div>
+        </div>
+        
         <div id="battleScene" class="battle-scene">
             <div id="sceneDescription" class="scene-description"></div>
             <div id="battleImage" class="battle-image">
@@ -79,7 +114,6 @@
             <h2>Battle Result</h2>
             <div id="scoreDisplay" class="score-display"></div>
             <div id="resultDescription" class="result-description"></div>
-            <button id="tryAgain" class="btn btn-secondary">Try Again</button>
         </div>
     </div>
     

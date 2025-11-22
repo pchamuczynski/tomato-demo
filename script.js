@@ -1,68 +1,34 @@
 // Fantasy Battle Generator JavaScript
 
-// Battle outcome configuration
-const battleOutcomes = {
-    // Format: "protagonist-protagonistWeapon-antagonist-antagonistWeapon-location": "outcome"
-    // Outcomes: "protagonist_wins", "antagonist_wins", "both_defeated", "both_standing"
-    
-    // Sample battles (hero-heroWeapon-villain-villainWeapon-location)
-    "edmund-*-*-*-swamp": "protagonist_wins",
-    "*-*-dragon-*-*": "antagonist_wins",  // Dragon with claws and teeth is very powerful
-    // "peter-sword-witch-sword-castle": "protagonist_wins",
-    // "peter-bow-witch-axe-forest": "both_standing",
-    // "peter-axe-witch-bow-desert": "antagonist_wins",
-    // "peter-sword-cyclops-axe-desert": "both_defeated",
-    // "peter-bow-cyclops-sword-castle": "protagonist_wins",
-    // "peter-axe-ogre-bow-swamp": "antagonist_wins",
-    
-    // "susan-bow-witch-sword-forest": "protagonist_wins",
-    // "susan-sword-cyclops-axe-castle": "both_standing",
-    // "susan-bow-ogre-sword-swamp": "protagonist_wins",
-    // "susan-axe-witch-bow-desert": "both_defeated",
-    
-    // "edmund-sword-witch-axe-desert": "both_standing",
-    // "edmund-axe-cyclops-sword-forest": "antagonist_wins",
-    // "edmund-sword-ogre-bow-castle": "protagonist_wins",
-    // "edmund-bow-witch-sword-swamp": "both_defeated",
-    
-    // "lucy-bow-witch-sword-castle": "protagonist_wins",
-    // "lucy-sword-cyclops-axe-swamp": "both_defeated",
-    // "lucy-axe-ogre-sword-forest": "antagonist_wins",
-    // "lucy-axe-witch-bow-desert": "both_standing",
-    
-    // // Additional battles with new weapons
-    // "peter-crossbow-witch-dagger-forest": "protagonist_wins",
-    // "peter-dagger-cyclops-mace-castle": "antagonist_wins",
-    // "susan-crossbow-ogre-mace-desert": "both_defeated",
-    // "susan-dagger-witch-crossbow-swamp": "both_standing",
-    // "edmund-crossbow-cyclops-dagger-forest": "protagonist_wins",
-    // "edmund-dagger-ogre-crossbow-castle": "antagonist_wins",
-    // "lucy-crossbow-witch-dagger-desert": "both_standing",
-    // "lucy-dagger-cyclops-crossbow-swamp": "both_defeated",
-    
-    // // Mace-specific battles for cyclops and ogre
-    // "peter-sword-cyclops-mace-desert": "antagonist_wins",
-    // "susan-bow-ogre-mace-forest": "both_defeated",
-    // "edmund-axe-cyclops-mace-castle": "protagonist_wins",
-    // "lucy-dagger-ogre-mace-swamp": "antagonist_wins",
-    
-    // // Dragon-specific battles with claws and teeth
-    // "peter-sword-dragon-claws and teeth-castle": "antagonist_wins",
-    // "peter-bow-dragon-claws and teeth-desert": "both_defeated",
-    // "susan-crossbow-dragon-claws and teeth-swamp": "protagonist_wins",
-    // "susan-axe-dragon-claws and teeth-swamp": "antagonist_wins",
-    // "edmund-dagger-dragon-claws and teeth-castle": "both_standing",
-    // "lucy-bow-dragon-claws and teeth-desert": "protagonist_wins",
-    // "lucy-sword-dragon-claws and teeth-forest": "both_defeated",
-    
-    // // Wildcard patterns - more specific patterns should come after exact matches
-    // "edmund-*-*-*-forest": "protagonist_wins",  // Edmund always wins in forest
-    // "lucy-*-*-*-swamp": "protagonist_wins",       // Lucy with bow always wins
-    // "*-*-cyclops-mace-*": "antagonist_wins",   // Cyclops with mace always wins
-    // "*-*-dragon-claws and teeth-*": "antagonist_wins",  // Dragon with claws and teeth is very powerful
-    // "*-dagger-witch-*-swamp": "both_defeated",  // Dagger vs witch in swamp always results in both defeated
-    // "susan-*-ogre-*-*": "both_standing"         // Susan vs ogre always results in stalemate
+// Battle outcome configuration sets
+const battleOutcomeSets = {
+    "Standard game": {
+        "edmund-*-dragon-*-swamp": "protagonist_wins",
+        "lucy-dagger-witch-*-*": "protagonist_wins",
+        "peter-*-cyclops-mace-*": "protagonist_wins",
+        "susan-bow-ogre-*-*": "protagonist_wins",
+        "*-*-*-*-*": "antagonist_wins"
+    },
+    "hero-villain": {
+        "edmund-*-dragon-*-*": "protagonist_wins",
+        "lucy-*-witch-*-*": "protagonist_wins",
+        "peter-*-cyclops-*-*": "protagonist_wins",
+        "susan-*-ogre-*-*": "protagonist_wins",
+        "*-*-*-*-*": "antagonist_wins"
+    },
+    "villain-weapon-location": {
+        "edmund-*-dragon-*-swamp": "protagonist_wins",
+        "lucy-*-witch-*-desert": "protagonist_wins",
+        "peter-*-cyclops-*-forest": "protagonist_wins",
+        "susan-*-ogre-*-castle": "protagonist_wins",
+        "*-*-*-*-*": "antagonist_wins"
+    },
+    "Chaotic": {
+    }
 };
+
+// Current active battle outcomes
+let currentBattleOutcomes = battleOutcomeSets["Standard game"];
 
 // Default outcomes for unconfigured combinations
 const defaultOutcomes = ["protagonist_wins", "antagonist_wins", "both_defeated", "both_standing"];
@@ -90,13 +56,13 @@ const resultSummaries = {
 };
 
 // DOM elements
+const outcomeSetSelect = document.getElementById('outcomeSet');
 const protagonistSelect = document.getElementById('protagonist');
 const protagonistWeaponSelect = document.getElementById('protagonistWeapon');
 const antagonistSelect = document.getElementById('antagonist');
 const antagonistWeaponSelect = document.getElementById('antagonistWeapon');
 const locationSelect = document.getElementById('location');
 const fightBtn = document.getElementById('fight');
-const tryAgainBtn = document.getElementById('tryAgain');
 
 const battleForm = document.querySelector('.battle-form');
 const battleScene = document.getElementById('battleScene');
@@ -106,7 +72,7 @@ const battleImage = document.getElementById('battleImage');
 const resultDescription = document.getElementById('resultDescription');
 const scoreDisplay = document.getElementById('scoreDisplay');
 
-// Current battle state and score tracking
+// Current battle state and game tracking
 let currentBattle = {};
 let gameStats = {
     totalBattles: 0,
@@ -116,7 +82,16 @@ let gameStats = {
     stalemates: 0
 };
 
+// Game state
+let defeatedVillains = new Set();
+const allVillains = ['witch', 'cyclops', 'ogre', 'dragon'];
+let battleCounter = 0;
+
 // Event listeners
+outcomeSetSelect.addEventListener('change', () => {
+    currentBattleOutcomes = battleOutcomeSets[outcomeSetSelect.value];
+    resetGame(); // Reset game when outcome set changes
+});
 protagonistSelect.addEventListener('change', updateBattleScene);
 protagonistWeaponSelect.addEventListener('change', updateBattleScene);
 antagonistSelect.addEventListener('change', () => {
@@ -126,12 +101,27 @@ antagonistSelect.addEventListener('change', () => {
 antagonistWeaponSelect.addEventListener('change', updateBattleScene);
 locationSelect.addEventListener('change', updateBattleScene);
 fightBtn.addEventListener('click', executeBattle);
-tryAgainBtn.addEventListener('click', resetBattle);
+document.getElementById('resetGame').addEventListener('click', resetGame);
 
 // Initialize the battle scene on page load
 document.addEventListener('DOMContentLoaded', () => {
+    // Populate outcome set selector
+    Object.keys(battleOutcomeSets).forEach(setName => {
+        const option = document.createElement('option');
+        option.value = setName;
+        option.textContent = setName;
+        if (setName === 'Standard game') option.selected = true;
+        outcomeSetSelect.appendChild(option);
+    });
+    
     updateAntagonistWeapons();
     updateBattleScene();
+    updateGameDisplay();
+    
+    // Initialize battle result container as hidden
+    const container = document.getElementById('battleResultContainer');
+    container.style.visibility = 'hidden';
+    container.style.opacity = '0';
 });
 
 function updateAntagonistWeapons() {
@@ -170,13 +160,25 @@ function updateAntagonistWeapons() {
 
 function updateBattleScene() {
     // Get current selected values
-    currentBattle = {
+    const newBattle = {
         protagonist: protagonistSelect.value,
         protagonistWeapon: protagonistWeaponSelect.value,
         antagonist: antagonistSelect.value,
         antagonistWeapon: antagonistWeaponSelect.value,
         location: locationSelect.value
     };
+    
+    // Check if configuration changed - if so, clear previous results
+    if (currentBattle.outcome && 
+        (currentBattle.protagonist !== newBattle.protagonist ||
+         currentBattle.protagonistWeapon !== newBattle.protagonistWeapon ||
+         currentBattle.antagonist !== newBattle.antagonist ||
+         currentBattle.antagonistWeapon !== newBattle.antagonistWeapon ||
+         currentBattle.location !== newBattle.location)) {
+        clearLastBattleResult();
+    }
+    
+    currentBattle = newBattle;
     
     // Update scene description
     sceneDescription.textContent = sceneDescriptions[currentBattle.location];
@@ -274,10 +276,10 @@ function matchesPattern(battleKey, pattern) {
 
 function findBattleOutcome(battleKey) {
     // Check outcomes iteratively as they are defined, exit on first match
-    for (const pattern in battleOutcomes) {
+    for (const pattern in currentBattleOutcomes) {
         // Check exact match or wildcard pattern
         if (pattern === battleKey || (pattern.includes('*') && matchesPattern(battleKey, pattern))) {
-            return battleOutcomes[pattern];
+            return currentBattleOutcomes[pattern];
         }
     }
     
@@ -297,11 +299,13 @@ function executeBattle() {
     // Store outcome for result display
     currentBattle.outcome = outcome;
     
-    // Update game statistics
+    // Update game statistics and track defeated villains
     gameStats.totalBattles++;
     switch(outcome) {
         case 'protagonist_wins':
             gameStats.wins++;
+            battleCounter++;
+            defeatedVillains.add(currentBattle.antagonist);
             break;
         case 'antagonist_wins':
             gameStats.losses++;
@@ -314,37 +318,17 @@ function executeBattle() {
             break;
     }
     
+    // Update game display
+    updateGameDisplay();
+    
     // Show defeated characters inline
     showBattleResult(outcome);
     
-    // Hide form and show result controls
-    document.querySelector('.form-row').style.display = 'none';
-    fightBtn.style.display = 'none';
+    // Show result info above the battle scene
+    showLastBattleResult(outcome);
     
-    // Show result info and try again button
-    const resultInfo = document.createElement('div');
-    resultInfo.className = 'result-info';
-    resultInfo.innerHTML = `
-        <div class="battle-outcome-summary" data-testid="battle-outcome">${resultSummaries[outcome]}</div>
-        <div class="result-text">${resultDescriptions[outcome]}</div>
-        <div class="battle-stats">
-            <strong>Battle ${gameStats.totalBattles}:</strong> 
-            ${currentBattle.protagonist.charAt(0).toUpperCase() + currentBattle.protagonist.slice(1)} (${currentBattle.protagonistWeapon}) vs 
-            ${currentBattle.antagonist.charAt(0).toUpperCase() + currentBattle.antagonist.slice(1)} (${currentBattle.antagonistWeapon}) 
-            in ${currentBattle.location}
-        </div>
-        <button id="tryAgainInline" class="btn btn-secondary">Try Again</button>
-    `;
-    
-    // Remove any existing result info
-    const existing = document.querySelector('.result-info');
-    if (existing) existing.remove();
-    
-    // Add result info after battle form
-    document.querySelector('.battle-form').appendChild(resultInfo);
-    
-    // Add event listener to new try again button
-    document.getElementById('tryAgainInline').addEventListener('click', resetBattle);
+    // Check for victory condition
+    checkVictoryCondition();
 }
 
 function showBattleResult(outcome) {
@@ -452,33 +436,7 @@ function createResultScene(outcome) {
     `;
 }
 
-function resetBattle() {
-    // Show form controls again
-    document.querySelector('.form-row').style.display = 'flex';
-    fightBtn.style.display = 'block';
-    
-    // Remove result info
-    const resultInfo = document.querySelector('.result-info');
-    if (resultInfo) resultInfo.remove();
-    
-    // Show VS indicator again
-    const vsIndicator = document.querySelector('.vs-indicator');
-    if (vsIndicator) vsIndicator.style.display = 'block';
-    
-    // Remove rotation classes from existing character images
-    const protagonistImg = document.querySelector('.protagonist-character img');
-    const antagonistImg = document.querySelector('.antagonist-character img');
-    if (protagonistImg) {
-        protagonistImg.classList.remove('character-defeated-hero');
-    }
-    if (antagonistImg) {
-        antagonistImg.classList.remove('character-defeated-villain');
-    }
-    
-    // Update weapon options and battle scene with current selections (this will restore original character images)
-    updateAntagonistWeapons();
-    updateBattleScene();
-}
+
 
 function updateScoreDisplay() {
     const winRate = gameStats.totalBattles > 0 ? ((gameStats.wins / gameStats.totalBattles) * 100).toFixed(1) : 0;
@@ -514,23 +472,299 @@ function updateScoreDisplay() {
     `;
 }
 
+// Game functions
+function showLastBattleResult(outcome) {
+    // Update the scene description with battle outcome
+    sceneDescription.textContent = resultDescriptions[outcome];
+    
+    // Hide the center overlay container since we're showing outcome in scene description
+    const container = document.getElementById('battleResultContainer');
+    container.style.visibility = 'hidden';
+    container.style.opacity = '0';
+    
+    // Check for victory and show congratulations in scene description
+    if (defeatedVillains.size === allVillains.length) {
+        sceneDescription.textContent = "🎉 CONGRATULATIONS! 🎉 You have defeated all the villains and saved the realm! You are a true hero!";
+    }
+}
+
+function clearLastBattleResult() {
+    // Reset scene description to original location description
+    if (currentBattle.location) {
+        sceneDescription.textContent = sceneDescriptions[currentBattle.location];
+    }
+    
+    // Hide the persistent result container
+    const container = document.getElementById('battleResultContainer');
+    container.style.visibility = 'hidden';
+    container.style.opacity = '0';
+    
+    // Clear the text content
+    container.querySelector('.battle-outcome-summary').textContent = '';
+    container.querySelector('.result-text').textContent = '';
+    container.querySelector('.battle-stats').innerHTML = '';
+    container.querySelector('#victoryText').style.display = 'none';
+    
+    // Reset any battle result visual effects
+    const protagonistImg = document.querySelector('.protagonist-character img');
+    const antagonistImg = document.querySelector('.antagonist-character img');
+    if (protagonistImg) {
+        protagonistImg.classList.remove('character-defeated-hero');
+    }
+    if (antagonistImg) {
+        antagonistImg.classList.remove('character-defeated-villain');
+    }
+    
+    // Show VS indicator again
+    const vsIndicator = document.querySelector('.vs-indicator');
+    if (vsIndicator) vsIndicator.style.display = 'block';
+    
+    // Clear outcome from current battle
+    delete currentBattle.outcome;
+}
+
+function updateGameDisplay() {
+    // Update battle counter (won / total)
+    document.getElementById('battleCounter').textContent = `${battleCounter} / ${gameStats.totalBattles}`;
+    
+    // Update defeated villains list
+    const defeatedList = document.getElementById('defeatedList');
+    defeatedList.innerHTML = '';
+    
+    if (defeatedVillains.size === 0) {
+        defeatedList.innerHTML = '<span class="no-defeats">None yet</span>';
+    } else {
+        defeatedVillains.forEach(villain => {
+            const villainElement = document.createElement('span');
+            villainElement.className = 'defeated-villain';
+            villainElement.innerHTML = `${getAntagonistIcon(villain)} ${villain.charAt(0).toUpperCase() + villain.slice(1)}`;
+            defeatedList.appendChild(villainElement);
+        });
+    }
+}
+
+function checkVictoryCondition() {
+    // Victory condition is now handled in showLastBattleResult
+    // No screen switching needed
+}
+
+function resetGame() {
+    // Reset all game state
+    defeatedVillains.clear();
+    battleCounter = 0;
+    gameStats = {
+        totalBattles: 0,
+        wins: 0,
+        losses: 0,
+        draws: 0,
+        stalemates: 0
+    };
+    
+    // Reset UI (no screen switching needed)
+    document.getElementById('victoryMessage').style.display = 'none';
+    
+    // Clear any battle results
+    clearLastBattleResult();
+    
+    // Reset battle scene
+    updateAntagonistWeapons();
+    updateBattleScene();
+    updateGameDisplay();
+}
+
 // Add some CSS for the battle visualization
 const style = document.createElement('style');
 style.textContent = `
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    
+    h1 {
+        margin: 0 0 10px 0;
+        font-size: 1.8rem;
+        text-align: center;
+    }
+    
+    .game-stats {
+        background: rgba(52, 73, 94, 0.9);
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 15px;
+        border-left: 4px solid #f39c12;
+        flex-shrink: 0;
+    }
+    
+    .outcome-set-selector {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .outcome-set-selector label {
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #f39c12;
+    }
+    
+    .outcome-set-selector select {
+        padding: 5px 8px;
+        border-radius: 4px;
+        border: 1px solid #34495e;
+        background: rgba(52, 73, 94, 0.9);
+        color: #ecf0f1;
+        font-size: 0.9rem;
+        min-width: 120px;
+    }
+    
+    .battle-counter {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #f39c12;
+    }
+    
+    .defeated-villains {
+        flex-grow: 1;
+        text-align: center;
+    }
+    
+    .defeated-villains h3 {
+        margin: 0 0 8px 0;
+        color: #e74c3c;
+        font-size: 0.9rem;
+    }
+    
+    .defeated-list {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .defeated-villain {
+        background: rgba(231, 76, 60, 0.2);
+        padding: 3px 8px;
+        border-radius: 12px;
+        border: 1px solid #e74c3c;
+        font-size: 0.8rem;
+        color: #ecf0f1;
+    }
+    
+    .no-defeats {
+        color: #95a5a6;
+        font-style: italic;
+    }
+    
+    .victory-message {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 15px;
+        border: 3px solid #d35400;
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+        flex-shrink: 0;
+    }
+    
+    .victory-message h2 {
+        color: #fff;
+        margin-bottom: 15px;
+        font-size: 2rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .victory-message p {
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 8px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    .victory-text {
+        background: linear-gradient(135deg, #f39c12, #e67e22);
+        color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        text-align: center;
+        border: 2px solid #d35400;
+        box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        line-height: 1.4;
+    }
+    
+    .battle-scene {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        position: relative;
+    }
+    
+    .scene-description {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 1rem;
+        color: #ecf0f1;
+        max-width: 80%;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .battle-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
     .battle-visual {
         text-align: center;
         color: #ecf0f1;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .battle-canvas, .result-canvas {
         position: relative;
-        width: 80vw;
-        max-width: 1000px;
-        min-height: 40vh;
-        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
         overflow: hidden;
-        margin: 0 auto 20px auto;
+        margin: 0 auto;
         border: 2px solid #34495e;
+        flex-shrink: 0;
     }
     
     .background-layer {
@@ -562,14 +796,17 @@ style.textContent = `
     }
     
     .characters-layer, .result-characters {
-        position: relative;
+        position: absolute;
+        bottom: 20%;
+        left: 0;
+        right: 0;
         z-index: 2;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
-        height: 100%;
-        padding: 20px;
-        min-height: 40vh;
+        height: 70%;
+        padding: 15px;
+        min-height: 0;
     }
     
     .protagonist-character, .antagonist-character,
@@ -591,16 +828,16 @@ style.textContent = `
     
     .protagonist-character .character-image,
     .protagonist-result .result-character-image {
-        max-width: 20vw;
-        max-height: 30vh;
-        height: 30vh;
+        max-width: 15vw;
+        max-height: 25vh;
+        height: 25vh;
     }
     
     .antagonist-character .character-image,
     .antagonist-result .result-character-image {
-        max-width: 24vw;
-        max-height: 36vh;
-        height: 36vh;
+        max-width: 18vw;
+        max-height: 30vh;
+        height: 30vh;
     }
     
     .vs-indicator {
@@ -643,12 +880,63 @@ style.textContent = `
         margin: 10px 0;
     }
     
-    .battle-info {
+    .battle-form {
+        flex-shrink: 0;
+        padding: 10px 0;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+    
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #f39c12;
+    }
+    
+    .form-group select {
+        padding: 5px 8px;
+        border-radius: 4px;
+        border: 1px solid #34495e;
         background: rgba(52, 73, 94, 0.9);
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        border-left: 4px solid #f39c12;
+        color: #ecf0f1;
+        font-size: 0.9rem;
+    }
+    
+    #fight {
+        padding: 8px 20px;
+        font-size: 1rem;
+        margin-top: 5px;
+    }
+    
+    .battle-info {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 1rem;
+        color: #ecf0f1;
+        max-width: 80%;
+        text-align: center;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .battle-result-visual {
@@ -659,13 +947,25 @@ style.textContent = `
         min-height: 250px;
     }
     
-    .result-info {
-        background: rgba(52, 73, 94, 0.9);
-        padding: 20px;
-        border-radius: 8px;
-        margin-top: 15px;
+    .result-info, .last-battle-result {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 20px 30px;
+        border-radius: 10px;
         text-align: center;
-        border-left: 4px solid #f39c12;
+        border: 2px solid #f39c12;
+        flex-shrink: 0;
+        min-height: 60px;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        backdrop-filter: blur(6px);
+        max-width: 90%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     }
     
     .battle-outcome-summary {
