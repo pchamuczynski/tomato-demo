@@ -10,10 +10,10 @@ const battleOutcomeSets = {
         "*-*-*-*-*": "antagonist_wins"
     },
     "hero-villain": {
-        "edmund-*-dragon-*-*": "protagonist_wins",
-        "lucy-*-witch-*-*": "protagonist_wins",
-        "peter-*-cyclops-*-*": "protagonist_wins",
-        "susan-*-ogre-*-*": "protagonist_wins",
+        "edmund-*-witch-*-*": "protagonist_wins",
+        "lucy-*-dragon-*-*": "protagonist_wins",
+        "peter-*-ogre-*-*": "protagonist_wins",
+        "susan-*-cyclops-*-*": "protagonist_wins",
         "*-*-*-*-*": "antagonist_wins"
     },
     "villain-weapon-location": {
