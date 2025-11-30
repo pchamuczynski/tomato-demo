@@ -1,5 +1,7 @@
 // Fantasy Battle Generator JavaScript
 
+// ============== PURE LOGIC (testable) ==============
+
 // Battle outcome configuration sets
 const battleOutcomeSets = {
     "Standard game": {
@@ -23,9 +25,41 @@ const battleOutcomeSets = {
         "susan-*-ogre-*-castle": "protagonist_wins",
         "*-*-*-*-*": "antagonist_wins"
     },
-    "Chaotic": {
-    }
+    "Chaotic": {}
 };
+
+function matchesPattern(battleKey, pattern) {
+    const battleParts = battleKey.split('-');
+    const patternParts = pattern.split('-');
+    
+    if (battleParts.length !== patternParts.length) {
+        return false;
+    }
+    
+    for (let i = 0; i < battleParts.length; i++) {
+        if (patternParts[i] !== '*' && patternParts[i] !== battleParts[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function findBattleOutcome(battleKey, battleOutcomes) {
+    for (const pattern in battleOutcomes) {
+        if (pattern === battleKey || (pattern.includes('*') && matchesPattern(battleKey, pattern))) {
+            return battleOutcomes[pattern];
+        }
+    }
+    return null;
+}
+
+function createBattleKey(protagonist, protagonistWeapon, antagonist, antagonistWeapon, location) {
+    return `${protagonist}-${protagonistWeapon}-${antagonist}-${antagonistWeapon}-${location}`;
+}
+
+// ============== BROWSER-ONLY CODE ==============
+if (typeof document !== 'undefined') {
 
 // Current active battle outcomes
 let currentBattleOutcomes = battleOutcomeSets["Standard game"];
@@ -257,41 +291,18 @@ function getAntagonistIcon(antagonist) {
     return antagonistIcons[antagonist] || '👹';
 }
 
-function matchesPattern(battleKey, pattern) {
-    const battleParts = battleKey.split('-');
-    const patternParts = pattern.split('-');
-    
-    if (battleParts.length !== patternParts.length) {
-        return false;
-    }
-    
-    for (let i = 0; i < battleParts.length; i++) {
-        if (patternParts[i] !== '*' && patternParts[i] !== battleParts[i]) {
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-function findBattleOutcome(battleKey) {
-    // Check outcomes iteratively as they are defined, exit on first match
-    for (const pattern in currentBattleOutcomes) {
-        // Check exact match or wildcard pattern
-        if (pattern === battleKey || (pattern.includes('*') && matchesPattern(battleKey, pattern))) {
-            return currentBattleOutcomes[pattern];
-        }
-    }
-    
-    return null;
-}
-
 function executeBattle() {
     // Generate battle key with all 5 parameters
-    const battleKey = `${currentBattle.protagonist}-${currentBattle.protagonistWeapon}-${currentBattle.antagonist}-${currentBattle.antagonistWeapon}-${currentBattle.location}`;
+    const battleKey = createBattleKey(
+        currentBattle.protagonist,
+        currentBattle.protagonistWeapon,
+        currentBattle.antagonist,
+        currentBattle.antagonistWeapon,
+        currentBattle.location
+    );
     
     // Get outcome from configuration (exact match or wildcard) or use random default
-    let outcome = findBattleOutcome(battleKey);
+    let outcome = findBattleOutcome(battleKey, currentBattleOutcomes);
     if (!outcome) {
         outcome = defaultOutcomes[Math.floor(Math.random() * defaultOutcomes.length)];
     }
@@ -1042,3 +1053,5 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+} // end of: if (typeof document !== 'undefined')

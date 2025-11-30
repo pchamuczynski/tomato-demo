@@ -1,0 +1,14 @@
+{
+  "name": "tomato-demo-vitest",
+  "version": "1.0.0",
+  "description": "Vitest tests for Fantasy Battle Generator",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.0"
+  }
+}

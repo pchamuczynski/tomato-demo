@@ -21,7 +21,6 @@ global parameters:
 - parameter: Location
   choices: [desert, swamp, forest, castle]  
 
-
 functions:
 - function: standard battle
   parameters:
