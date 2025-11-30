@@ -1,0 +1,30 @@
+functions:
+- function: hero-villain battle
+  parameters:
+  - parameter: hero
+    choices: [Peter, Susan, Edmund, Lucy]
+  - parameter: hero weapon
+    choices: [sword, axe, dagger, bow, crossbow]
+  - parameter: villain
+    choices: [witch, ogre, cyclops, dragon]
+  - parameter: villain weapon
+    choices: [sword, axe, dagger, bow, crossbow, claws and teeth, mace]
+  - parameter: location
+    choices: [desert, swamp, forest, castle]  
+  - output parameter: outcome
+    default value: villain wins
+  logic:
+  - constraint: only ogres and cyclopes use mace
+    expression: "IF 'villain weapon' IS 'mace' THEN 'villain' IN ['ogre', 'cyclops']"
+  - constraint: dragons use only claws and teeth
+    expression: "IF 'villain' IS 'dragon' THEN 'villain weapon' IS 'claws and teeth'"
+  - constraint: Only dragons use claws and teeth
+    expression: "IF 'villain weapon' IS 'claws and teeth' THEN 'villain' IS 'dragon'"
+  - assignment: Peter wins with ogre
+    expression: "IF 'hero' IS 'Peter' AND 'villain' IS 'ogre' THEN 'outcome'='hero wins'"
+  - assignment: Susan wins with cyclops
+    expression: "IF 'hero' IS 'Susan' AND 'villain' IS 'cyclops' THEN 'outcome'='hero wins'"
+  - assignment: Edmund wins with witch
+    expression: "IF 'hero' IS 'Edmund' AND 'villain' IS 'witch' THEN 'outcome'='hero wins'"
+  - assignment: Lucy wins with dragon
+    expression: "IF 'hero' IS 'Lucy' AND 'villain' IS 'dragon' THEN 'outcome'='hero wins'"
