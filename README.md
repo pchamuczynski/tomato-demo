@@ -1,120 +1,137 @@
-# Fantasy Battle Generator
+# Fantasy Battle Generator - Test Automation Demo
 
-A simple web application that generates fantasy battle scenarios with customizable outcomes based on character, weapon, and location selections.
+This project demonstrates **parameterized testing** using [tomato](https://pypi.org/project/testomaton/) for test case generation. It showcases how to use the same YAML-based test model to drive both Python (pytest + Playwright) and JavaScript (Vitest) test suites.
 
-## Features
+## Overview
 
-- **Character Selection**: Choose from Peter, Susan, Edmund, or Lucy as protagonists
-- **Enemy Selection**: Battle against witch, cyclops, or ogre antagonists  
-- **Weapon Choice**: Fight with sword, bow, or axe
-- **Location Settings**: Battle in desert, forest, castle, or swamp environments
-- **Real-Time Battle Arena**: Battle scene updates instantly as you change selections
-- **Visual Battle Scenes**: Complete image composition with backgrounds and character images
-- **Image-Based Results**: Shows characters in victory/defeat poses based on battle outcomes
-- **Battle Statistics Tracking**: Comprehensive score system tracking wins, losses, draws, and stalemates
-- **Win Rate Calculation**: Displays your success rate across all battles
-- **Configurable Outcomes**: Pre-configured battle results with fallback to random outcomes
-- **Image Resource System**: Organized folder structure for easy image management
-- **Fallback Graphics**: Emoji icons display when images are missing
-- **Responsive Design**: Works on desktop and mobile devices
+The Fantasy Battle Generator is a simple web application where battle outcomes are determined by combinations of hero, weapon, villain, and location. The key focus is on **testing the battle outcome logic** with automatically generated test parameters.
 
-## How to Use
+## Test Architecture
 
-1. Open `index.html` in a web browser
-2. Select your protagonist, antagonist, weapon, and location from the dropdown menus
-3. Watch as the battle scene updates in real-time with your selections
-4. Click "Fight!" to resolve the battle and see the outcome
-5. View your battle statistics and results
-6. Click "Try Again" to return to the battle arena for another fight
+```
+test/
+├── epic_battle.yaml        # Tomato model defining test parameters
+├── hero-villain.yaml       # Alternative battle model
+├── pytest/                 # Python browser tests
+│   ├── test_epic_battle.py
+│   ├── Pipfile
+│   └── pytest.ini
+└── vitest/                 # JavaScript unit tests
+    ├── script.test.js
+    ├── scriptLoader.js
+    └── package.json
+```
 
-## Battle Outcomes
+## Tomato Test Model
 
-The application supports four different battle outcomes:
-- **Protagonist Wins**: Hero defeats the enemy
-- **Antagonist Wins**: Enemy defeats the hero  
-- **Both Defeated**: Both combatants fall in battle
-- **Both Standing**: Epic stalemate with mutual respect
+The `test/epic_battle.yaml` file defines the test parameter space:
 
-## Customizing Outcomes
+```yaml
+standard battle:
+  parameters:
+    hero:
+      name: [Peter, Susan, Edmund, Lucy]
+      weapon: [sword, bow, axe, crossbow, dagger]
+    villain:
+      name: [witch, cyclops, ogre, dragon]
+      weapon: [sword, bow, axe, crossbow, dagger, mace, claws and teeth]
+    location: [desert, forest, castle, swamp]
+    outcome: [hero wins, villain wins]
+```
 
-Battle outcomes are configured in the `battleOutcomes` object in `script.js`. You can modify existing combinations or add new ones using the format:
+Tomato generates test combinations using n-wise algorithms, ensuring good coverage without exhaustive enumeration.
+
+## Prerequisites
+
+- **tomato**: Install with `pip install testomaton` (free, open-source)
+- **Python 3.x** with pipenv (for pytest)
+- **Node.js** (for Vitest)
+
+## Running Tests
+
+### Python Tests (pytest + Playwright)
+
+The pytest suite runs end-to-end browser tests. It supports both **headed** (visible browser) and **headless** modes to demonstrate different testing scenarios.
+
+```bash
+cd test/pytest
+pipenv install
+pipenv run playwright install webkit
+pipenv run pytest test_epic_battle.py -v
+```
+
+**How it works:**
+
+1. `run_tomato_with_file()` executes tomato CLI to generate test cases
+2. `@pytest.mark.parametrize` receives the generated combinations
+3. Playwright automates the browser to test each combination
+4. Two fixtures demonstrate headed vs headless execution:
+   - `headed_browser_page` - browser UI visible (for demos)
+   - `headless_browser_page` - no UI (for CI/CD)
+
+```python
+@pytest.mark.parametrize("hero,hero_weapon,villain,villain_weapon,location,expected_outcome", 
+    run_tomato_with_file(
+        input_file="epic_battle.yaml",
+        function="standard battle",
+        options=['-n3']  # 3-wise coverage
+    )
+)
+def test_standard_battle(headless_browser_page, hero, hero_weapon, ...):
+    # Test executes for each generated combination
+```
+
+### JavaScript Tests (Vitest)
+
+The Vitest suite tests the battle outcome logic directly without a browser.
+
+```bash
+cd test/vitest
+npm install
+npm test
+```
+
+**How it works:**
+
+1. `runTomato()` executes tomato CLI and parses CSV output
+2. `it.each()` runs the test for each generated combination
+3. `scriptLoader.js` extracts testable functions from `script.js`
 
 ```javascript
-"protagonist-antagonist-weapon-location": "outcome"
+const standardBattleCases = runTomato('standard battle', ['-n3']);
+
+describe('findBattleOutcome - Standard game', () => {
+    it.each(standardBattleCases)(
+        'battle(%s, %s, %s, %s, %s) should result in "%s"',
+        (hero, heroWeapon, villain, villainWeapon, location, expectedOutcome) => {
+            const battleKey = createBattleKey(hero, heroWeapon, villain, villainWeapon, location);
+            expect(findBattleOutcome(battleKey, outcomes)).toBe(expected);
+        }
+    );
+});
 ```
 
-For example:
-```javascript
-"Peter-witch-sword-castle": "protagonist_wins"
+## Tomato CLI Usage
+
+Generate test cases directly:
+
+```bash
+# 3-wise combinations for standard battle
+tomato -H -f "standard battle" test/epic_battle.yaml -n3
+
+# 2-wise with specific tuple focus
+tomato -H -f "hero-villain battle" test/epic_battle.yaml -n2 --tuples-from "hero::name,villain::name"
 ```
 
-If no specific outcome is configured, the system will randomly select from the available outcomes.
+Options:
+- `-H` - Output without header row
+- `-f "function"` - Select specific function from YAML
+- `-n3` - N-wise coverage level (2=pairwise, 3=3-wise, etc.)
+- `--tuples-from` - Focus coverage on specific parameter combinations
 
-## Project Structure
+## Key Benefits
 
-```
-├── index.html              # Main HTML file with form and battle interface
-├── style.css               # Styling with fantasy theme
-├── script.js               # Battle logic and outcome configuration
-├── resources/              # Image assets folder
-│   ├── characters/         # Character images (protagonists/antagonists with weapons)
-│   ├── backgrounds/        # Location background images  
-│   ├── weapons/            # Individual weapon images (future use)
-│   └── README.md          # Image specifications and requirements
-└── README.md              # This file
-```
-
-## Technologies Used
-
-- HTML5 for structure
-- CSS3 for styling with gradients and animations
-- Vanilla JavaScript for interactivity
-- Responsive design for mobile compatibility
-
-## Browser Compatibility
-
-This application works in all modern browsers that support:
-- ES6 JavaScript features
-- CSS3 flexbox and gradients
-- HTML5 form elements
-
-## Image Setup
-
-### Required Images
-
-The application expects images in the `resources/` folder:
-
-**Character Images** (PNG with transparency recommended):
-- `peter-sword.png`, `peter-bow.png`, `peter-axe.png`
-- `susan-sword.png`, `susan-bow.png`, `susan-axe.png`
-- `edmund-sword.png`, `edmund-bow.png`, `edmund-axe.png`
-- `lucy-sword.png`, `lucy-bow.png`, `lucy-axe.png`
-- `witch.png`, `cyclops.png`, `ogre.png`
-- `peter-defeated.png`, `susan-defeated.png`, `edmund-defeated.png`, `lucy-defeated.png`
-- `witch-defeated.png`, `cyclops-defeated.png`, `ogre-defeated.png`
-
-**Background Images** (JPG or PNG):
-- `desert.jpg`, `forest.jpg`, `castle.jpg`, `swamp.jpg`
-
-### Image Specifications
-- Character images: 200x300px recommended, PNG format with transparency
-- Background images: 800x400px recommended, JPG or PNG format
-- Follow exact naming conventions as shown above
-
-### Fallback Behavior
-If images are missing, the application gracefully falls back to:
-- Text labels and emoji icons
-- Colored placeholder backgrounds
-- Console warnings about missing images
-
-## Development
-
-To modify the application:
-
-1. Edit `index.html` to change the structure or add new form elements
-2. Update `style.css` to modify the visual appearance
-3. Modify `script.js` to change battle logic or add new outcomes
-4. Add your images to the `resources/` folders following the naming convention
-5. Test in a web browser by opening `index.html`
-
-No build process or dependencies are required - this is a pure client-side application.
+1. **Single Source of Truth**: Test parameters defined once in YAML, used by both test frameworks
+2. **Efficient Coverage**: N-wise algorithms reduce test count while maintaining coverage
+3. **Framework Agnostic**: Same model drives Python and JavaScript tests
+4. **Maintainable**: Add new parameters or values in YAML, tests automatically adapt
