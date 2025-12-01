@@ -1,63 +1,60 @@
 global parameters:
-- parameter: Hero
-  parameters: 
-  - parameter: name
-    choices: [Peter, Susan, Edmund, Lucy]
-  - parameter: weapon
-    choices: [sword, axe, dagger, bow, crossbow]
-- parameter: Villain
-  parameters: 
-  - parameter: name
-    choices: [witch, ogre, cyclops, dragon]
-  - parameter: weapon
-    choices: [sword, axe, dagger, bow, crossbow, claws and teeth, mace]
+- parameter: Battle
+  parameters:
+  - parameter: hero
+    parameters: 
+    - parameter: name
+      choices: [Peter, Susan, Edmund, Lucy]
+    - parameter: weapon
+      choices: [sword, axe, dagger, bow, crossbow]
+  - parameter: villain
+    parameters: 
+    - parameter: name
+      choices: [witch, ogre, cyclops, dragon]
+    - parameter: weapon
+      choices: [sword, axe, dagger, bow, crossbow, claws and teeth, mace]
+    logic:
+    - constraint: only ogres and cyclopes use mace
+      expression: "'weapon' IS 'mace' => 'name' IN ['ogre', 'cyclops']"
+    - constraint: dragons use only claws and teeth
+      expression: "'name' IS 'dragon' => 'weapon' IS 'claws and teeth'"
+    - constraint: Only dragons use claws and teeth
+      expression: "'weapon' IS 'claws and teeth' => 'name' IS 'dragon'"
+  - parameter: location
+    choices: [desert, swamp, forest, castle]  
   logic:
-  - constraint: only ogres and cyclopes use mace
-    expression: "'weapon' IS 'mace' => 'name' IN ['ogre', 'cyclops']"
-  - constraint: dragons use only claws and teeth
-    expression: "'name' IS 'dragon' => 'weapon' IS 'claws and teeth'"
-  - constraint: Only dragons use claws and teeth
-    expression: "'weapon' IS 'claws and teeth' => 'name' IS 'dragon'"
-- parameter: Location
-  choices: [desert, swamp, forest, castle]  
+  - constraint: Lucy not using axe agains ogre
+    expression: "'hero::name' IS 'Lucy' AND 'villain::name' IS 'ogre' => 'hero::weapon' IS NOT 'axe'"
 
 functions:
 - function: standard battle
   parameters:
-  - linked parameter: hero
-    linked to: Hero
-  - linked parameter: villain
-    linked to: Villain
-  - linked parameter: location
-    linked to: Location
+  - linked parameter: battle
+    linked to: Battle
   - output parameter: outcome
     default value: villain wins
   logic:
   - assignment: Peter wins against cyclops that uses mace
-    expression: "'hero::name' IS 'Peter' AND 'villain::name' IS 'cyclops' AND 'villain::weapon' IS 'mace' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Peter' AND 'battle::villain::name' IS 'cyclops' AND 'battle::villain::weapon' IS 'mace' => 'outcome'='hero wins'"
   - assignment: Edmund wins with a dragon in swamp
-    expression: "'hero::name' IS 'Edmund' AND 'villain::name' IS 'dragon' AND 'location' IS 'swamp' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Edmund' AND 'battle::villain::name' IS 'dragon' AND 'battle::location' IS 'swamp' => 'outcome'='hero wins'"
   - assignment: Susan wins with bow in agains ogre
-    expression: "'hero::name' IS 'Susan' AND 'hero::weapon' IS 'bow' AND 'villain::name' IS 'ogre' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Susan' AND 'battle::hero::weapon' IS 'bow' AND 'battle::villain::name' IS 'ogre' => 'outcome'='hero wins'"
   - assignment: Lucy using dagger wins against witch 
-    expression: "'hero::name' IS 'Lucy' AND 'villain::name' IS 'witch' AND 'hero::weapon' IS 'dagger' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Lucy' AND 'battle::villain::name' IS 'witch' AND 'battle::hero::weapon' IS 'dagger' => 'outcome'='hero wins'"
 
 - function: hero-villain battle
   parameters:
-  - linked parameter: hero
-    linked to: Hero
-  - linked parameter: villain
-    linked to: Villain
-  - linked parameter: location
-    linked to: Location
+  - linked parameter: battle
+    linked to: Battle
   - output parameter: outcome
     default value: villain wins
   logic:
   - assignment: Peter wins with ogre
-    expression: "'hero::name' IS 'Peter' AND 'villain::name' IS 'ogre' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Peter' AND 'battle::villain::name' IS 'ogre' => 'outcome'='hero wins'"
   - assignment: Susan wins with cyclops
-    expression: "'hero::name' IS 'Susan' AND 'villain::name' IS 'cyclops' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Susan' AND 'battle::villain::name' IS 'cyclops' => 'outcome'='hero wins'"
   - assignment: Edmund wins with witch
-    expression: "'hero::name' IS 'Edmund' AND 'villain::name' IS 'witch' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Edmund' AND 'battle::villain::name' IS 'witch' => 'outcome'='hero wins'"
   - assignment: Lucy wins with dragon
-    expression: "'hero::name' IS 'Lucy' AND 'villain::name' IS 'dragon' => 'outcome'='hero wins'"
+    expression: "'battle::hero::name' IS 'Lucy' AND 'battle::villain::name' IS 'dragon' => 'outcome'='hero wins'"

@@ -73,7 +73,7 @@ def headless_browser_page(playwright_instance):
 
 @pytest.mark.parametrize("hero,hero_weapon,villain,villain_weapon,location,expected_outcome", 
     run_tomato_with_file(
-        options = ['-n2', '--tuples-from', 'hero::name,villain::name'],
+        options = ['-n2', '--tuples-from', 'battle::hero::name,battle::villain::name'],
         input_file=str(Path(__file__).parent.parent / "epic_battle.yaml"),
         function="hero-villain battle"
     )

@@ -14,12 +14,15 @@ functions:
   - output parameter: outcome
     default value: villain wins
   logic:
+  - constraint: Lucy not using axe agains ogre
+    expression: "IF 'hero' IS 'Lucy' AND 'villain' IS 'ogre' THEN 'hero weapon' IS NOT 'axe'"
   - constraint: only ogres and cyclopes use mace
     expression: "IF 'villain weapon' IS 'mace' THEN 'villain' IN ['ogre', 'cyclops']"
   - constraint: dragons use only claws and teeth
     expression: "IF 'villain' IS 'dragon' THEN 'villain weapon' IS 'claws and teeth'"
   - constraint: Only dragons use claws and teeth
     expression: "IF 'villain weapon' IS 'claws and teeth' THEN 'villain' IS 'dragon'"
+
   - assignment: Peter wins with ogre
     expression: "IF 'hero' IS 'Peter' AND 'villain' IS 'ogre' THEN 'outcome'='hero wins'"
   - assignment: Susan wins with cyclops

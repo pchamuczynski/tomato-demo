@@ -2,6 +2,101 @@
 
 // ============== PURE LOGIC (testable) ==============
 
+// Weapon constraints configuration
+// Each constraint specifies when a weapon is NOT available
+// Hero constraints can use: weapon, hero, villain, villainWeapon, location
+// Villain constraints can use: weapon, villain, hero, heroWeapon, location
+// If a field is omitted, it means "any"
+const weaponConstraints = {
+    hero: [
+        // Lucy cannot use axe against ogre
+        // { weapon: 'axe', hero: 'lucy', villain: 'ogre' },
+        // Examples:
+        // { weapon: 'sword', hero: 'susan', location: 'swamp' },
+        // { weapon: 'bow', villain: 'dragon', villainWeapon: 'claws and teeth' },
+        // { weapon: 'dagger', hero: 'peter', villain: 'witch', location: 'forest' },
+    ],
+    villain: [
+        // Examples:
+        // { weapon: 'mace', villain: 'ogre', hero: 'peter' },
+        // { weapon: 'sword', villain: 'witch', heroWeapon: 'bow', location: 'castle' },
+    ]
+};
+
+// Allowed weapons per character (if not listed, all standard weapons are available)
+const allowedWeapons = {
+    hero: {
+        // All heroes can use all standard weapons by default
+        // peter: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
+        // susan: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
+        // edmund: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
+        // lucy: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
+    },
+    villain: {
+        witch: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
+        cyclops: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
+        ogre: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
+        dragon: ['claws and teeth']
+    }
+};
+
+// Standard weapons available to all characters unless restricted
+const standardWeapons = ['sword', 'bow', 'crossbow', 'axe', 'dagger'];
+
+/**
+ * Get available weapons for a hero based on constraints
+ * @param {string} hero - Hero name
+ * @param {string} villain - Current villain (optional)
+ * @param {string} villainWeapon - Current villain weapon (optional)
+ * @param {string} location - Current location (optional)
+ * @returns {string[]} - Array of available weapon names
+ */
+function getHeroWeapons(hero, villain = null, villainWeapon = null, location = null) {
+    // Start with allowed weapons or standard weapons
+    let weapons = allowedWeapons.hero[hero] || [...standardWeapons];
+    
+    // Apply constraints
+    weapons = weapons.filter(weapon => {
+        return !weaponConstraints.hero.some(constraint => {
+            const matchesWeapon = constraint.weapon === weapon;
+            const matchesHero = !constraint.hero || constraint.hero === hero;
+            const matchesVillain = !constraint.villain || constraint.villain === villain;
+            const matchesVillainWeapon = !constraint.villainWeapon || constraint.villainWeapon === villainWeapon;
+            const matchesLocation = !constraint.location || constraint.location === location;
+            return matchesWeapon && matchesHero && matchesVillain && matchesVillainWeapon && matchesLocation;
+        });
+    });
+    
+    return weapons;
+}
+
+/**
+ * Get available weapons for a villain based on constraints
+ * @param {string} villain - Villain name
+ * @param {string} hero - Current hero (optional)
+ * @param {string} heroWeapon - Current hero weapon (optional)
+ * @param {string} location - Current location (optional)
+ * @returns {string[]} - Array of available weapon names
+ */
+function getVillainWeapons(villain, hero = null, heroWeapon = null, location = null) {
+    // Start with allowed weapons or standard weapons
+    let weapons = allowedWeapons.villain[villain] || [...standardWeapons];
+    
+    // Apply constraints
+    weapons = weapons.filter(weapon => {
+        return !weaponConstraints.villain.some(constraint => {
+            const matchesWeapon = constraint.weapon === weapon;
+            const matchesVillain = !constraint.villain || constraint.villain === villain;
+            const matchesHero = !constraint.hero || constraint.hero === hero;
+            const matchesHeroWeapon = !constraint.heroWeapon || constraint.heroWeapon === heroWeapon;
+            const matchesLocation = !constraint.location || constraint.location === location;
+            return matchesWeapon && matchesVillain && matchesHero && matchesHeroWeapon && matchesLocation;
+        });
+    });
+    
+    return weapons;
+}
+
 // Battle outcome configuration sets
 const battleOutcomeSets = {
     "Standard game": {
@@ -120,20 +215,41 @@ let gameStats = {
 let defeatedVillains = new Set();
 const allVillains = ['witch', 'cyclops', 'ogre', 'dragon'];
 let battleCounter = 0;
+let isUpdatingWeapons = false; // Prevent cascading updates
 
 // Event listeners
 outcomeSetSelect.addEventListener('change', () => {
     currentBattleOutcomes = battleOutcomeSets[outcomeSetSelect.value];
     resetGame(); // Reset game when outcome set changes
 });
-protagonistSelect.addEventListener('change', updateBattleScene);
-protagonistWeaponSelect.addEventListener('change', updateBattleScene);
-antagonistSelect.addEventListener('change', () => {
-    updateAntagonistWeapons();
+protagonistSelect.addEventListener('change', () => {
+    if (isUpdatingWeapons) return;
+    updateHeroWeapons();
+    updateVillainWeapons();
     updateBattleScene();
 });
-antagonistWeaponSelect.addEventListener('change', updateBattleScene);
-locationSelect.addEventListener('change', updateBattleScene);
+protagonistWeaponSelect.addEventListener('change', () => {
+    if (isUpdatingWeapons) return;
+    updateVillainWeapons();
+    updateBattleScene();
+});
+antagonistSelect.addEventListener('change', () => {
+    if (isUpdatingWeapons) return;
+    updateHeroWeapons();
+    updateVillainWeapons();
+    updateBattleScene();
+});
+antagonistWeaponSelect.addEventListener('change', () => {
+    if (isUpdatingWeapons) return;
+    updateHeroWeapons();
+    updateBattleScene();
+});
+locationSelect.addEventListener('change', () => {
+    if (isUpdatingWeapons) return;
+    updateHeroWeapons();
+    updateVillainWeapons();
+    updateBattleScene();
+});
 fightBtn.addEventListener('click', executeBattle);
 document.getElementById('resetGame').addEventListener('click', resetGame);
 
@@ -148,7 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
         outcomeSetSelect.appendChild(option);
     });
     
-    updateAntagonistWeapons();
+    updateHeroWeapons();
+    updateVillainWeapons();
     updateBattleScene();
     updateGameDisplay();
     
@@ -158,19 +275,46 @@ document.addEventListener('DOMContentLoaded', () => {
     container.style.opacity = '0';
 });
 
-function updateAntagonistWeapons() {
-    const antagonist = antagonistSelect.value;
+function updateHeroWeapons() {
+    isUpdatingWeapons = true;
+    const hero = protagonistSelect.value;
+    const villain = antagonistSelect.value;
+    const villainWeapon = antagonistWeaponSelect.value;
+    const location = locationSelect.value;
+    const currentWeapon = protagonistWeaponSelect.value;
+    
+    const weapons = getHeroWeapons(hero, villain, villainWeapon, location);
+    
+    // Clear current options
+    protagonistWeaponSelect.innerHTML = '';
+    
+    // Add available weapon options
+    weapons.forEach(weapon => {
+        const option = document.createElement('option');
+        option.value = weapon;
+        option.textContent = weapon.charAt(0).toUpperCase() + weapon.slice(1);
+        protagonistWeaponSelect.appendChild(option);
+    });
+    
+    // Try to maintain current selection if it's available
+    if (weapons.includes(currentWeapon)) {
+        protagonistWeaponSelect.value = currentWeapon;
+    } else {
+        // Default to first available weapon
+        protagonistWeaponSelect.value = weapons[0];
+    }
+    isUpdatingWeapons = false;
+}
+
+function updateVillainWeapons() {
+    isUpdatingWeapons = true;
+    const villain = antagonistSelect.value;
+    const hero = protagonistSelect.value;
+    const heroWeapon = protagonistWeaponSelect.value;
+    const location = locationSelect.value;
     const currentWeapon = antagonistWeaponSelect.value;
     
-    // Define available weapons for each antagonist
-    const availableWeapons = {
-        witch: ['sword', 'bow', 'crossbow', 'axe', 'dagger'],
-        cyclops: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
-        ogre: ['sword', 'bow', 'crossbow', 'axe', 'dagger', 'mace'],
-        dragon: ['claws and teeth']
-    };
-    
-    const weapons = availableWeapons[antagonist] || ['sword', 'bow', 'crossbow', 'axe', 'dagger'];
+    const weapons = getVillainWeapons(villain, hero, heroWeapon, location);
     
     // Clear current options
     antagonistWeaponSelect.innerHTML = '';
@@ -190,6 +334,7 @@ function updateAntagonistWeapons() {
         // Default to first available weapon
         antagonistWeaponSelect.value = weapons[0];
     }
+    isUpdatingWeapons = false;
 }
 
 function updateBattleScene() {
