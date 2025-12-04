@@ -1,15 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@jest/globals';
 import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import { 
     findBattleOutcome, 
     createBattleKey, 
     battleOutcomeSets 
 } from './scriptLoader.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const yamlFile = '../epic_battle.yaml';
 
 /**
