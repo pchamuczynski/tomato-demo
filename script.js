@@ -10,7 +10,7 @@
 const weaponConstraints = {
     hero: [
         // Lucy cannot use axe against ogre
-        // { weapon: 'axe', hero: 'lucy', villain: 'ogre' },
+        { weapon: 'axe', hero: 'lucy', villain: 'ogre' },
         // Examples:
         // { weapon: 'sword', hero: 'susan', location: 'swamp' },
         // { weapon: 'bow', villain: 'dragon', villainWeapon: 'claws and teeth' },
@@ -109,7 +109,7 @@ const battleOutcomeSets = {
     "hero-villain": {
         "edmund-*-witch-*-*": "protagonist_wins",
         "lucy-*-dragon-*-*": "protagonist_wins",
-        "peter-*-ogre-*-*": "protagonist_wins",
+        // "peter-*-ogre-*-*": "protagonist_wins",
         "susan-*-cyclops-*-*": "protagonist_wins",
         "*-*-*-*-*": "antagonist_wins"
     },

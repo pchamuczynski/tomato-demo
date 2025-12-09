@@ -47,7 +47,7 @@ describe('findBattleOutcome - Standard game', () => {
     );
 });
 
-const heroVillainCases = runTomato('hero-villain battle', ['-n2', '--tuples-from', 'hero::name,villain::name']);
+const heroVillainCases = runTomato('hero-villain battle', ['-n2', '--tuples-from', 'battle::hero::name,battle::villain::name']);
 describe('findBattleOutcome - hero-villain matchups', () => {
     const outcomes = battleOutcomeSets['hero-villain'];
     
